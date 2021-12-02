@@ -12,6 +12,7 @@ pub fn main() anyerror!void {
     const stdout = std.io.getStdOut().writer();
 
     try @import("day1.zig").run(&stdout);
+    try @import("day2.zig").run(&stdout);
 }
 
 test "sub-tests" {
