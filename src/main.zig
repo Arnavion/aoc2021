@@ -23,6 +23,7 @@ pub fn main() anyerror!void {
     try @import("day10.zig").run(&stdout);
     try @import("day11.zig").run(&stdout);
     try @import("day12.zig").run(&allocator.allocator, &stdout);
+    try @import("day13.zig").run(&stdout);
 }
 
 test "sub-tests" {
