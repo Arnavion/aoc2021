@@ -2,7 +2,7 @@ const std = @import("std");
 
 const input = @import("input.zig");
 
-pub fn run(allocator: *std.mem.Allocator, stdout: anytype) anyerror!void {
+pub fn run(allocator: std.mem.Allocator, stdout: anytype) anyerror!void {
     var input_ = try input.readFile("inputs/day12");
     defer input_.deinit();
 
@@ -42,7 +42,7 @@ const Input = struct {
 
     nodes: [max_num_nodes]NodeInfo,
 
-    fn init(allocator: *std.mem.Allocator, input_: anytype) !@This() {
+    fn init(allocator: std.mem.Allocator, input_: anytype) !@This() {
         var node_names = try std.BoundedArray([]const u8, max_num_nodes).init(0);
         defer for (node_names.slice()) |node_name| {
             allocator.free(node_name);
@@ -90,7 +90,7 @@ const Input = struct {
     }
 
     fn addNode(
-        allocator: *std.mem.Allocator,
+        allocator: std.mem.Allocator,
         node_names: *std.BoundedArray([]const u8, max_num_nodes),
         nodes: *[max_num_nodes]NodeInfo,
         name: []const u8,
@@ -119,11 +119,11 @@ const Input = struct {
     }
 };
 
-fn part1(allocator: *std.mem.Allocator, input_: *const Input) !usize {
+fn part1(allocator: std.mem.Allocator, input_: *const Input) !usize {
     return solve(allocator, input_, false);
 }
 
-fn part2(allocator: *std.mem.Allocator, input_: *const Input) !usize {
+fn part2(allocator: std.mem.Allocator, input_: *const Input) !usize {
     return solve(allocator, input_, true);
 }
 
@@ -164,7 +164,7 @@ const Path = struct {
     }
 };
 
-fn solve(allocator: *std.mem.Allocator, input_: *const Input, allow_visiting_small_twice: bool) !usize {
+fn solve(allocator: std.mem.Allocator, input_: *const Input, allow_visiting_small_twice: bool) !usize {
     var result: usize = 0;
 
     var paths = std.ArrayList(Path).init(allocator);
@@ -211,19 +211,10 @@ test "day 12 example 1" {
         ;
 
     var input__ = input.readString(input_);
+    const input_parsed = try Input.init(std.testing.allocator, &input__);
 
-    var allocator = std.heap.GeneralPurposeAllocator(.{}){};
-    defer {
-        const leaked = allocator.deinit();
-        if (leaked) {
-            @panic("memory leaked");
-        }
-    }
-
-    const input_parsed = try Input.init(&allocator.allocator, &input__);
-
-    try std.testing.expectEqual(@as(usize, 10), try part1(&allocator.allocator, &input_parsed));
-    try std.testing.expectEqual(@as(usize, 36), try part2(&allocator.allocator, &input_parsed));
+    try std.testing.expectEqual(@as(usize, 10), try part1(std.testing.allocator, &input_parsed));
+    try std.testing.expectEqual(@as(usize, 36), try part2(std.testing.allocator, &input_parsed));
 }
 
 test "day 12 example 2" {
@@ -241,19 +232,10 @@ test "day 12 example 2" {
         ;
 
     var input__ = input.readString(input_);
+    const input_parsed = try Input.init(std.testing.allocator, &input__);
 
-    var allocator = std.heap.GeneralPurposeAllocator(.{}){};
-    defer {
-        const leaked = allocator.deinit();
-        if (leaked) {
-            @panic("memory leaked");
-        }
-    }
-
-    const input_parsed = try Input.init(&allocator.allocator, &input__);
-
-    try std.testing.expectEqual(@as(usize, 19), try part1(&allocator.allocator, &input_parsed));
-    try std.testing.expectEqual(@as(usize, 103), try part2(&allocator.allocator, &input_parsed));
+    try std.testing.expectEqual(@as(usize, 19), try part1(std.testing.allocator, &input_parsed));
+    try std.testing.expectEqual(@as(usize, 103), try part2(std.testing.allocator, &input_parsed));
 }
 
 test "day 12 example 3" {
@@ -279,17 +261,8 @@ test "day 12 example 3" {
         ;
 
     var input__ = input.readString(input_);
+    const input_parsed = try Input.init(std.testing.allocator, &input__);
 
-    var allocator = std.heap.GeneralPurposeAllocator(.{}){};
-    defer {
-        const leaked = allocator.deinit();
-        if (leaked) {
-            @panic("memory leaked");
-        }
-    }
-
-    const input_parsed = try Input.init(&allocator.allocator, &input__);
-
-    try std.testing.expectEqual(@as(usize, 226), try part1(&allocator.allocator, &input_parsed));
-    try std.testing.expectEqual(@as(usize, 3509), try part2(&allocator.allocator, &input_parsed));
+    try std.testing.expectEqual(@as(usize, 226), try part1(std.testing.allocator, &input_parsed));
+    try std.testing.expectEqual(@as(usize, 3509), try part2(std.testing.allocator, &input_parsed));
 }

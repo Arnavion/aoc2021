@@ -2,7 +2,7 @@ const std = @import("std");
 
 const input = @import("input.zig");
 
-pub fn run(allocator: *std.mem.Allocator, stdout: anytype) anyerror!void {
+pub fn run(allocator: std.mem.Allocator, stdout: anytype) anyerror!void {
     var input_ = try input.readFile("inputs/day4");
     defer input_.deinit();
 
@@ -30,7 +30,7 @@ const Input = struct {
     nums: std.ArrayList(BoardSpot.Type),
     boards: std.ArrayList(Board),
 
-    fn init(allocator: *std.mem.Allocator, input_: anytype) !@This() {
+    fn init(allocator: std.mem.Allocator, input_: anytype) !@This() {
         var nums = std.ArrayList(BoardSpot.Type).init(allocator);
         errdefer nums.deinit();
         {
@@ -217,16 +217,7 @@ test "day 4 example 1" {
         ;
 
     var input__ = input.readString(input_);
-
-    var allocator = std.heap.GeneralPurposeAllocator(.{}){};
-    defer {
-        const leaked = allocator.deinit();
-        if (leaked) {
-            @panic("memory leaked");
-        }
-    }
-
-    var input_parsed = try Input.init(&allocator.allocator, &input__);
+    var input_parsed = try Input.init(std.testing.allocator, &input__);
     defer input_parsed.deinit();
 
     try std.testing.expectEqual(@as(Board.Score, 188 * 24), try part1(&input_parsed));

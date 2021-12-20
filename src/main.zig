@@ -13,8 +13,8 @@ pub fn main() anyerror!void {
 
     try @import("day1.zig").run(&stdout);
     try @import("day2.zig").run(&stdout);
-    try @import("day3.zig").run(&allocator.allocator, &stdout);
-    try @import("day4.zig").run(&allocator.allocator, &stdout);
+    try @import("day3.zig").run(allocator.allocator(), &stdout);
+    try @import("day4.zig").run(allocator.allocator(), &stdout);
     try @import("day5.zig").run(&stdout);
     try @import("day6.zig").run(&stdout);
     try @import("day7.zig").run(&stdout);
@@ -22,11 +22,11 @@ pub fn main() anyerror!void {
     try @import("day9.zig").run(&stdout);
     try @import("day10.zig").run(&stdout);
     try @import("day11.zig").run(&stdout);
-    try @import("day12.zig").run(&allocator.allocator, &stdout);
+    try @import("day12.zig").run(allocator.allocator(), &stdout);
     try @import("day13.zig").run(&stdout);
     try @import("day14.zig").run(&stdout);
-    try @import("day15.zig").run(&stdout);
-    try @import("day16.zig").run(&allocator.allocator, &stdout);
+    try @import("day15.zig").run(allocator.allocator(), &stdout);
+    try @import("day16.zig").run(allocator.allocator(), &stdout);
     try @import("day17.zig").run(&stdout);
     try @import("day18.zig").run(&stdout);
     try @import("day19.zig").run(&stdout);

@@ -444,15 +444,7 @@ test "day 18 example 15" {
 }
 
 fn expectEqualTree(expected: []const u8, actual: Tree) !void {
-    var allocator = std.heap.GeneralPurposeAllocator(.{}){};
-    defer {
-        const leaked = allocator.deinit();
-        if (leaked) {
-            @panic("memory leaked");
-        }
-    }
-
-    var string = std.ArrayList(u8).init(&allocator.allocator);
+    var string = std.ArrayList(u8).init(std.testing.allocator);
     defer string.deinit();
 
     var string_writer = string.writer();

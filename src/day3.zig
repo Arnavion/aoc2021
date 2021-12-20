@@ -2,7 +2,7 @@ const std = @import("std");
 
 const input = @import("input.zig");
 
-pub fn run(allocator: *std.mem.Allocator, stdout: anytype) anyerror!void {
+pub fn run(allocator: std.mem.Allocator, stdout: anytype) anyerror!void {
     {
         var input_ = try input.readFile("inputs/day3");
         defer input_.deinit();
@@ -71,7 +71,7 @@ fn part1(input_: anytype) !Answer {
     return @as(Answer, gamma_rate) * @as(Answer, epsilon_rate);
 }
 
-fn part2(allocator: *std.mem.Allocator, input_: anytype) !Answer {
+fn part2(allocator: std.mem.Allocator, input_: anytype) !Answer {
     var input_list = std.ArrayList(Datum).init(allocator);
     defer input_list.deinit();
     while (try input_.next()) |line| {
@@ -161,16 +161,5 @@ test "day 3 example 1" {
         ;
 
     try std.testing.expectEqual(@as(Answer, 22 * 9), try part1(&input.readString(input_)));
-
-    {
-        var allocator = std.heap.GeneralPurposeAllocator(.{}){};
-        defer {
-            const leaked = allocator.deinit();
-            if (leaked) {
-                @panic("memory leaked");
-            }
-        }
-
-        try std.testing.expectEqual(@as(Answer, 23 * 10), try part2(&allocator.allocator, &input.readString(input_)));
-    }
+    try std.testing.expectEqual(@as(Answer, 23 * 10), try part2(std.testing.allocator, &input.readString(input_)));
 }

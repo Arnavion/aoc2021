@@ -1,6 +1,6 @@
 [Advent of Code 2021](https://adventofcode.com/2021) in Zig.
 
-Zig version used: 0.9.0-dev.1815+20e19e75f
+Zig version used: 0.9.0
 
 
 # License

@@ -2,7 +2,7 @@ const std = @import("std");
 
 const input = @import("input.zig");
 
-pub fn run(allocator: *std.mem.Allocator, stdout: anytype) anyerror!void {
+pub fn run(allocator: std.mem.Allocator, stdout: anytype) anyerror!void {
     {
         var input_ = try input.readFile("inputs/day16");
         defer input_.deinit();
@@ -22,7 +22,7 @@ pub fn run(allocator: *std.mem.Allocator, stdout: anytype) anyerror!void {
     }
 }
 
-fn part1(allocator: *std.mem.Allocator, input_: anytype) !u64 {
+fn part1(allocator: std.mem.Allocator, input_: anytype) !u64 {
     var bits = try BitsIterator.init(input_);
 
     var packet = try Packet.init(allocator, &bits);
@@ -34,7 +34,7 @@ fn part1(allocator: *std.mem.Allocator, input_: anytype) !u64 {
     return sum;
 }
 
-fn part2(allocator: *std.mem.Allocator, input_: anytype) !u64 {
+fn part2(allocator: std.mem.Allocator, input_: anytype) !u64 {
     var bits = try BitsIterator.init(input_);
 
     var packet = try Packet.init(allocator, &bits);
@@ -65,7 +65,7 @@ const Packet = struct {
     version: u3,
     body: PacketBody,
 
-    fn init(allocator: *std.mem.Allocator, bits: *BitsIterator) error{InvalidCharacter, InvalidInput, OutOfMemory, Overflow}!@This() {
+    fn init(allocator: std.mem.Allocator, bits: *BitsIterator) error{InvalidCharacter, InvalidInput, OutOfMemory, Overflow}!@This() {
         const version = try getNum(3, bits);
 
         const type_id = try getNum(3, bits);
@@ -273,15 +273,7 @@ test "day 16 example 1" {
     var input__ = input.readString(input_);
     var bits = try BitsIterator.init(&input__);
 
-    var allocator = std.heap.GeneralPurposeAllocator(.{}){};
-    defer {
-        const leaked = allocator.deinit();
-        if (leaked) {
-            @panic("memory leaked");
-        }
-    }
-
-    var packet = try Packet.init(&allocator.allocator, &bits);
+    var packet = try Packet.init(std.testing.allocator, &bits);
     defer packet.deinit();
 
     try std.testing.expectEqual(@as(u3, 6), packet.version);
@@ -299,15 +291,7 @@ test "day 16 example 2" {
     var input__ = input.readString(input_);
     var bits = try BitsIterator.init(&input__);
 
-    var allocator = std.heap.GeneralPurposeAllocator(.{}){};
-    defer {
-        const leaked = allocator.deinit();
-        if (leaked) {
-            @panic("memory leaked");
-        }
-    }
-
-    var packet = try Packet.init(&allocator.allocator, &bits);
+    var packet = try Packet.init(std.testing.allocator, &bits);
     defer packet.deinit();
 
     try std.testing.expectEqual(@as(u3, 1), packet.version);
@@ -340,15 +324,7 @@ test "day 16 example 3" {
     var input__ = input.readString(input_);
     var bits = try BitsIterator.init(&input__);
 
-    var allocator = std.heap.GeneralPurposeAllocator(.{}){};
-    defer {
-        const leaked = allocator.deinit();
-        if (leaked) {
-            @panic("memory leaked");
-        }
-    }
-
-    var packet = try Packet.init(&allocator.allocator, &bits);
+    var packet = try Packet.init(std.testing.allocator, &bits);
     defer packet.deinit();
 
     try std.testing.expectEqual(@as(u3, 7), packet.version);
@@ -384,20 +360,12 @@ test "day 16 example 4" {
         \\8A004A801A8002F478
         ;
 
-    var allocator = std.heap.GeneralPurposeAllocator(.{}){};
-    defer {
-        const leaked = allocator.deinit();
-        if (leaked) {
-            @panic("memory leaked");
-        }
-    }
-
     {
         var input__ = input.readString(input_);
 
         var bits = try BitsIterator.init(&input__);
 
-        var packet = try Packet.init(&allocator.allocator, &bits);
+        var packet = try Packet.init(std.testing.allocator, &bits);
         defer packet.deinit();
 
         try std.testing.expectEqual(@as(u3, 4), packet.version);
@@ -434,7 +402,7 @@ test "day 16 example 4" {
         }
     }
 
-    try std.testing.expectEqual(@as(u64, 16), try part1(&allocator.allocator, &input.readString(input_)));
+    try std.testing.expectEqual(@as(u64, 16), try part1(std.testing.allocator, &input.readString(input_)));
 }
 
 test "day 16 example 5" {
@@ -442,20 +410,12 @@ test "day 16 example 5" {
         \\620080001611562C8802118E34
         ;
 
-    var allocator = std.heap.GeneralPurposeAllocator(.{}){};
-    defer {
-        const leaked = allocator.deinit();
-        if (leaked) {
-            @panic("memory leaked");
-        }
-    }
-
     {
         var input__ = input.readString(input_);
 
         var bits = try BitsIterator.init(&input__);
 
-        var packet = try Packet.init(&allocator.allocator, &bits);
+        var packet = try Packet.init(std.testing.allocator, &bits);
         defer packet.deinit();
 
         try std.testing.expectEqual(@as(u3, 3), packet.version);
@@ -483,7 +443,7 @@ test "day 16 example 5" {
         }
     }
 
-    try std.testing.expectEqual(@as(u64, 12), try part1(&allocator.allocator, &input.readString(input_)));
+    try std.testing.expectEqual(@as(u64, 12), try part1(std.testing.allocator, &input.readString(input_)));
 }
 
 test "day 16 example 6" {
@@ -491,20 +451,12 @@ test "day 16 example 6" {
         \\C0015000016115A2E0802F182340
         ;
 
-    var allocator = std.heap.GeneralPurposeAllocator(.{}){};
-    defer {
-        const leaked = allocator.deinit();
-        if (leaked) {
-            @panic("memory leaked");
-        }
-    }
-
     {
         var input__ = input.readString(input_);
 
         var bits = try BitsIterator.init(&input__);
 
-        var packet = try Packet.init(&allocator.allocator, &bits);
+        var packet = try Packet.init(std.testing.allocator, &bits);
         defer packet.deinit();
 
         switch (packet.body) {
@@ -531,7 +483,7 @@ test "day 16 example 6" {
         }
     }
 
-    try std.testing.expectEqual(@as(u64, 23), try part1(&allocator.allocator, &input.readString(input_)));
+    try std.testing.expectEqual(@as(u64, 23), try part1(std.testing.allocator, &input.readString(input_)));
 }
 
 test "day 16 example 7" {
@@ -539,20 +491,12 @@ test "day 16 example 7" {
         \\A0016C880162017C3686B18A3D4780
         ;
 
-    var allocator = std.heap.GeneralPurposeAllocator(.{}){};
-    defer {
-        const leaked = allocator.deinit();
-        if (leaked) {
-            @panic("memory leaked");
-        }
-    }
-
     {
         var input__ = input.readString(input_);
 
         var bits = try BitsIterator.init(&input__);
 
-        var packet = try Packet.init(&allocator.allocator, &bits);
+        var packet = try Packet.init(std.testing.allocator, &bits);
         defer packet.deinit();
 
         switch (packet.body) {
@@ -588,7 +532,7 @@ test "day 16 example 7" {
         }
     }
 
-    try std.testing.expectEqual(@as(u64, 31), try part1(&allocator.allocator, &input.readString(input_)));
+    try std.testing.expectEqual(@as(u64, 31), try part1(std.testing.allocator, &input.readString(input_)));
 }
 
 test "day 16 example 8" {
@@ -596,15 +540,7 @@ test "day 16 example 8" {
         \\C200B40A82
         ;
 
-    var allocator = std.heap.GeneralPurposeAllocator(.{}){};
-    defer {
-        const leaked = allocator.deinit();
-        if (leaked) {
-            @panic("memory leaked");
-        }
-    }
-
-    try std.testing.expectEqual(@as(u64, 1 + 2), try part2(&allocator.allocator, &input.readString(input_)));
+    try std.testing.expectEqual(@as(u64, 1 + 2), try part2(std.testing.allocator, &input.readString(input_)));
 }
 
 test "day 16 example 9" {
@@ -612,15 +548,7 @@ test "day 16 example 9" {
         \\04005AC33890
         ;
 
-    var allocator = std.heap.GeneralPurposeAllocator(.{}){};
-    defer {
-        const leaked = allocator.deinit();
-        if (leaked) {
-            @panic("memory leaked");
-        }
-    }
-
-    try std.testing.expectEqual(@as(u64, 6 * 9), try part2(&allocator.allocator, &input.readString(input_)));
+    try std.testing.expectEqual(@as(u64, 6 * 9), try part2(std.testing.allocator, &input.readString(input_)));
 }
 
 test "day 16 example 10" {
@@ -628,15 +556,7 @@ test "day 16 example 10" {
         \\880086C3E88112
         ;
 
-    var allocator = std.heap.GeneralPurposeAllocator(.{}){};
-    defer {
-        const leaked = allocator.deinit();
-        if (leaked) {
-            @panic("memory leaked");
-        }
-    }
-
-    try std.testing.expectEqual(@as(u64, std.math.min3(7, 8, 9)), try part2(&allocator.allocator, &input.readString(input_)));
+    try std.testing.expectEqual(@as(u64, std.math.min3(7, 8, 9)), try part2(std.testing.allocator, &input.readString(input_)));
 }
 
 test "day 16 example 11" {
@@ -644,15 +564,7 @@ test "day 16 example 11" {
         \\CE00C43D881120
         ;
 
-    var allocator = std.heap.GeneralPurposeAllocator(.{}){};
-    defer {
-        const leaked = allocator.deinit();
-        if (leaked) {
-            @panic("memory leaked");
-        }
-    }
-
-    try std.testing.expectEqual(@as(u64, std.math.max3(7, 8, 9)), try part2(&allocator.allocator, &input.readString(input_)));
+    try std.testing.expectEqual(@as(u64, std.math.max3(7, 8, 9)), try part2(std.testing.allocator, &input.readString(input_)));
 }
 
 test "day 16 example 12" {
@@ -660,15 +572,7 @@ test "day 16 example 12" {
         \\D8005AC2A8F0
         ;
 
-    var allocator = std.heap.GeneralPurposeAllocator(.{}){};
-    defer {
-        const leaked = allocator.deinit();
-        if (leaked) {
-            @panic("memory leaked");
-        }
-    }
-
-    try std.testing.expectEqual(@as(u64, if (5 < 15) 1 else 0), try part2(&allocator.allocator, &input.readString(input_)));
+    try std.testing.expectEqual(@as(u64, if (5 < 15) 1 else 0), try part2(std.testing.allocator, &input.readString(input_)));
 }
 
 test "day 16 example 13" {
@@ -676,15 +580,7 @@ test "day 16 example 13" {
         \\F600BC2D8F
         ;
 
-    var allocator = std.heap.GeneralPurposeAllocator(.{}){};
-    defer {
-        const leaked = allocator.deinit();
-        if (leaked) {
-            @panic("memory leaked");
-        }
-    }
-
-    try std.testing.expectEqual(@as(u64, if (5 > 15) 1 else 0), try part2(&allocator.allocator, &input.readString(input_)));
+    try std.testing.expectEqual(@as(u64, if (5 > 15) 1 else 0), try part2(std.testing.allocator, &input.readString(input_)));
 }
 
 test "day 16 example 14" {
@@ -692,15 +588,7 @@ test "day 16 example 14" {
         \\9C005AC2F8F0
         ;
 
-    var allocator = std.heap.GeneralPurposeAllocator(.{}){};
-    defer {
-        const leaked = allocator.deinit();
-        if (leaked) {
-            @panic("memory leaked");
-        }
-    }
-
-    try std.testing.expectEqual(@as(u64, if (5 == 15) 1 else 0), try part2(&allocator.allocator, &input.readString(input_)));
+    try std.testing.expectEqual(@as(u64, if (5 == 15) 1 else 0), try part2(std.testing.allocator, &input.readString(input_)));
 }
 
 test "day 16 example 15" {
@@ -708,13 +596,5 @@ test "day 16 example 15" {
         \\9C0141080250320F1802104A08
         ;
 
-    var allocator = std.heap.GeneralPurposeAllocator(.{}){};
-    defer {
-        const leaked = allocator.deinit();
-        if (leaked) {
-            @panic("memory leaked");
-        }
-    }
-
-    try std.testing.expectEqual(@as(u64, if (1 + 3 == 2 * 2) 1 else 0), try part2(&allocator.allocator, &input.readString(input_)));
+    try std.testing.expectEqual(@as(u64, if (1 + 3 == 2 * 2) 1 else 0), try part2(std.testing.allocator, &input.readString(input_)));
 }
