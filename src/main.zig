@@ -30,6 +30,7 @@ pub fn main() anyerror!void {
     try @import("day17.zig").run(&stdout);
     try @import("day18.zig").run(&stdout);
     try @import("day19.zig").run(&stdout);
+    try @import("day20.zig").run(&stdout);
 }
 
 test "sub-tests" {
