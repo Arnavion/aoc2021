@@ -57,7 +57,7 @@ fn part1() Answer {
         std.debug.assert(z == 0);
     }
     else {
-        result_digits = day24_compiled.evaluate2(.{ 9, 8, 7, 6, 5, 4, 3, 2, 1 });
+        result_digits = day24_compiled.evaluate2(.{ 9, 8, 7, 6, 5, 4, 3, 2, 1 }) catch unreachable;
     }
 
     var result: Answer = 0;
@@ -75,7 +75,7 @@ fn part2() Answer {
         std.debug.assert(z == 0);
     }
     else {
-        result_digits = day24_compiled.evaluate2(.{ 1, 2, 3, 4, 5, 6, 7, 8, 9 });
+        result_digits = day24_compiled.evaluate2(.{ 1, 2, 3, 4, 5, 6, 7, 8, 9 }) catch unreachable;
     }
 
     var result: Answer = 0;
